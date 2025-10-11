@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: mv_db
+      POSTGRES_USER: mv_user
+      POSTGRES_PASSWORD: secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  mv-api:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DATABASE_URL: jdbc:postgresql://postgres:5432/mv_db
+      REDIS_URL: redis://redis:6379
