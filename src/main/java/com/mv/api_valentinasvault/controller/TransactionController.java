@@ -8,6 +8,7 @@ import com.mv.api_valentinasvault.model.User;
 import com.mv.api_valentinasvault.model.UserRule;
 import com.mv.api_valentinasvault.repository.MonthlySummaryRepository;
 import com.mv.api_valentinasvault.repository.UserRuleRepository;
+import com.mv.api_valentinasvault.service.SavingsService;
 import com.mv.api_valentinasvault.service.TransactionService;
 import com.mv.api_valentinasvault.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +30,13 @@ public class TransactionController {
     private final UserService userService;
     private final MonthlySummaryRepository monthlySummaryRepository;
     private final UserRuleRepository userRulesRepository;
-    public TransactionController(TransactionService transactionService, UserService userService, MonthlySummaryRepository monthlySummaryRepository, UserRuleRepository userRulesRepository) {
+    private final SavingsService savingGoalService;
+    public TransactionController(TransactionService transactionService, UserService userService, MonthlySummaryRepository monthlySummaryRepository, UserRuleRepository userRulesRepository, SavingsService savingGoalService) {
         this.transactionService = transactionService;
         this.userService = userService;
         this.monthlySummaryRepository = monthlySummaryRepository;
         this.userRulesRepository = userRulesRepository;
+        this.savingGoalService = savingGoalService;
     }
 
     // 🔹 Obtener todas las transacciones de un usuario
@@ -160,6 +163,8 @@ public class TransactionController {
         BigDecimal amount = body.get("amount");
 
         transactionService.addDirectSaving(user, amount);
+
+        savingGoalService.updateGoalsWithNewSaving(user, amount);
 
         return ResponseEntity.ok("Direct saving added");
     }

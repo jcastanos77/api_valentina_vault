@@ -30,6 +30,9 @@ public class SavingsGoal {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    private LocalDateTime UpdatedAt;
+
     // Getters y setters
 
     public UUID getId() {
@@ -86,5 +89,13 @@ public class SavingsGoal {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return UpdatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        UpdatedAt = updatedAt;
     }
 }

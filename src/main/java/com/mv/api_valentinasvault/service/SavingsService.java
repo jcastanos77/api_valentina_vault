@@ -9,6 +9,7 @@ import com.mv.api_valentinasvault.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -81,6 +82,24 @@ public class SavingsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return getUserSavingsProgress(email);
+    }
+
+    public void updateGoalsWithNewSaving(User user, BigDecimal newSavingAmount) {
+        List<SavingsGoal> goals = savingsGoalRepository.findByUserId(user.getId());
+        if (goals.isEmpty()) return;
+
+        for (SavingsGoal goal : goals) {
+            if (goal.getCurrentAmount().compareTo(goal.getTargetAmount()) < 0) {
+                BigDecimal newAmount = goal.getCurrentAmount().add(newSavingAmount);
+                if (newAmount.compareTo(goal.getTargetAmount()) > 0) {
+                    newAmount = goal.getTargetAmount(); // no pasar del 100%
+                }
+                goal.setCurrentAmount(newAmount);
+                goal.setUpdatedAt(LocalDateTime.now());
+                savingsGoalRepository.save(goal);
+                break;
+            }
+        }
     }
 
 }
