@@ -38,7 +38,7 @@ public class SavingsController {
                                                               @RequestBody Map<String, Object> body) {
         String email = userService.getEmailFromToken(authHeader);
         String name = (String) body.get("name");
-        Double targetAmount = (Double) body.get("targetAmount");
+        int targetAmount = (int) body.get("targetAmount");
 
         Map<String, Object> response = savingsService.addSavingsGoal(email, name, targetAmount);
         return ResponseEntity.ok(response);

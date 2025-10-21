@@ -56,7 +56,7 @@ public class SavingsService {
         return progressList;
     }
 
-    public Map<String, Object> addSavingsGoal(String email, String name, Double targetAmount) {
+    public Map<String, Object> addSavingsGoal(String email, String name, int targetAmount) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
