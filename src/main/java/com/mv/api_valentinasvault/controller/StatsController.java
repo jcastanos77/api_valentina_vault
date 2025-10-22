@@ -58,16 +58,20 @@ public class StatsController {
         List<Transaction> recentTransactions = transactionRepository
                 .findTop10ByUserIdOrderByTransactionDateDesc(user.getId());
 
-        List<Map<String, Object>> txList = recentTransactions.stream().map(tx -> {
-            Map<String, Object> txMap = new HashMap<>();
-            txMap.put("id", tx.getId());
-            txMap.put("description", tx.getDescription());
-            txMap.put("amount", tx.getAmount());
-            txMap.put("category", tx.getCategory());
-            txMap.put("type", tx.getType());
-            txMap.put("transactionDate", tx.getTransactionDate());
-            return txMap;
-        }).toList();
+        List<Map<String, Object>> txList = recentTransactions.stream()
+                .filter(tx -> "expense".equalsIgnoreCase(tx.getType()) && tx.getCategory() != null)
+                .map(tx -> {
+                    Map<String, Object> txMap = new HashMap<>();
+                    txMap.put("id", tx.getId());
+                    txMap.put("description", tx.getDescription());
+                    txMap.put("amount", tx.getAmount());
+                    txMap.put("type", tx.getType());
+                    txMap.put("category", tx.getCategory());
+                    txMap.put("transactionDate", tx.getTransactionDate());
+                    return txMap;
+                })
+                .toList();
+
 
         Map<String, Object> result = new HashMap<>();
         result.put("totalIncome", totalIncome);
