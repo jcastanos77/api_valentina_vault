@@ -101,5 +101,14 @@ public class SavingsService {
             }
         }
     }
+    public boolean deleteGoal(UUID goalId, User user) {
+        return savingsGoalRepository.findByIdAndUser(goalId, user)
+                .map(goal -> {
+                    savingsGoalRepository.delete(goal);
+                    return true;
+                })
+                .orElse(false);
+
+    }
 
 }

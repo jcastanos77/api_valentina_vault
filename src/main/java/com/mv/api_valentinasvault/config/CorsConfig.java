@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:56507", "https://apivalentinavault-production.up.railway.app", "https://fabulous-panda-26fca0.netlify.app")
+                        .allowedOrigins("http://localhost:51570", "https://apivalentinavault-production.up.railway.app", "https://fabulous-panda-26fca0.netlify.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

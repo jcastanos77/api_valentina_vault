@@ -82,5 +82,22 @@ public class SavingsController {
         goal.setUpdatedAt(LocalDateTime.now());
         return ResponseEntity.ok(savingGoalRepository.save(goal));
     }
+
+    @DeleteMapping("/deleteGoal/{goalId}")
+    public ResponseEntity<String> deleteSavingsGoal(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable UUID goalId) {
+
+        String email = userService.getEmailFromToken(authHeader);
+        User user = userService.findByEmail(email);
+
+        boolean deleted = savingsService.deleteGoal(goalId, user);
+
+        if (deleted) {
+            return ResponseEntity.ok("Goal deleted successfully");
+        } else {
+            return ResponseEntity.status(404).body("Goal not found");
+        }
+    }
     
 }
