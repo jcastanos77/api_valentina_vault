@@ -42,6 +42,7 @@ public class MotivationController {
                     map.put("userName", item.getUser().getFullName());
                     map.put("content", item.getContent());
                     map.put("createdAt", item.getCreatedAt());
+                    map.put("commentCount", item.getComments().size());
                     return map;
                 })
                 .collect(Collectors.toList());

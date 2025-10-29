@@ -2,6 +2,8 @@ package com.mv.api_valentinasvault.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +23,9 @@ public class MotivationalPost {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MotivationalComment> comments = new ArrayList<>();
 
     // Getters y setters
     public UUID getId() {
@@ -53,5 +58,13 @@ public class MotivationalPost {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<MotivationalComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<MotivationalComment> comments) {
+        this.comments = comments;
     }
 }
