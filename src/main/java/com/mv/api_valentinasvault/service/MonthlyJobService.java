@@ -15,6 +15,8 @@ public class MonthlyJobService {
     @Autowired
     private UserRepository userRepository;
 
+    private NotificationService notificationService;
+
     @Autowired
     private TransactionService transactionService;
 
@@ -35,4 +37,21 @@ public class MonthlyJobService {
 
         System.out.println("✅ Cierre de mes ejecutado para " + users.size() + " usuarios");
     }
+
+    @Scheduled(cron = "0 0 8 1,15 * *") // Cada quincena a las 8:00 AM
+    public void scheduleResetReminders() {
+        List<User> users = userRepository.findAll();
+
+        for (User user : users) {
+            notificationService.createNotification(
+                    user,
+                    "¿Quieres reiniciar tus resúmenes?",
+                    "Ha comenzado una nueva quincena. Puedes reiniciar tus resúmenes financieros si lo deseas.",
+                    "RESET_SUMMARY_REMINDER"
+            );
+        }
+
+        System.out.println("🔔 Recordatorios quincenales generados para " + users.size() + " usuarios");
+    }
+
 }

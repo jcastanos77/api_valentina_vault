@@ -1,6 +1,7 @@
 package com.mv.api_valentinasvault.repository;
 
 import com.mv.api_valentinasvault.model.Transaction;
+import com.mv.api_valentinasvault.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
@@ -16,4 +17,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     List<Transaction> findTop10ByUserIdOrderByTransactionDateDesc(UUID userId);
 
+    void deleteAllByUser(User user);
 }

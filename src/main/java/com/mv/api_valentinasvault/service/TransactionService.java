@@ -6,10 +6,12 @@ import com.mv.api_valentinasvault.model.User;
 import com.mv.api_valentinasvault.model.UserRule;
 import com.mv.api_valentinasvault.repository.MonthlySummaryRepository;
 import com.mv.api_valentinasvault.repository.TransactionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -152,13 +154,20 @@ public class TransactionService {
         transactionRepository.save(tx);
     }
 
-
-
+    @Transactional
     public void closeMonth(User user, int year, int month) {
-        Optional<MonthlySummary> optionalSummary = monthlySummaryRepository.findByUserIdAndYearAndMonth(user.getId(), year, month);
+        Optional<MonthlySummary> optionalSummary =
+                monthlySummaryRepository.findByUserIdAndYearAndMonth(user.getId(), year, month);
+
         if (optionalSummary.isPresent()) {
             MonthlySummary summary = optionalSummary.get();
 
+            if (summary.isClosed()) {
+                System.out.println("⚠️ Resumen ya cerrado para " + user.getEmail() + " mes " + month);
+                return;
+            }
+
+            // 🔹 Calcular sobrante
             BigDecimal basicosTotal = summary.getTotalIncome().multiply(BigDecimal.valueOf(0.5));
             BigDecimal lujosTotal = summary.getTotalIncome().multiply(BigDecimal.valueOf(0.3));
 
@@ -169,11 +178,22 @@ public class TransactionService {
 
             if (transfer.compareTo(BigDecimal.ZERO) > 0) {
                 summary.setAutomaticTransfer(summary.getAutomaticTransfer().add(transfer));
-                monthlySummaryRepository.save(summary);
             }
+
+            summary.setTotalIncome(BigDecimal.ZERO);
+            summary.setBasicosSpent(BigDecimal.ZERO);
+            summary.setAhorroSpent(BigDecimal.ZERO);
+            summary.setLujosSpent(BigDecimal.ZERO);
+
+            summary.setClosed(true);
+
+            monthlySummaryRepository.save(summary);
+
+            System.out.println("✅ Resumen cerrado para " + user.getEmail() + " mes " + month);
+        } else {
+            System.out.println("❌ No se encontró resumen para " + user.getEmail() + " mes " + month);
         }
     }
-
 
 }
 

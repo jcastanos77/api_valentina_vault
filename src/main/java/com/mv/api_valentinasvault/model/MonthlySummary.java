@@ -41,6 +41,10 @@ public class MonthlySummary {
 
     private BigDecimal ahorroDirecto;
 
+    @Column(name = "is_closed")
+    private boolean closed = false;
+
+
     // Getters y setters
 
     public MonthlySummary(UUID id, User user, int year, int month, BigDecimal totalIncome, BigDecimal basicosSpent, BigDecimal ahorroSpent, BigDecimal lujosSpent, BigDecimal automaticTransfer, LocalDateTime createdAt, BigDecimal ahorroDirecto) {
@@ -150,5 +154,13 @@ public class MonthlySummary {
 
     public void setAhorroDirecto(BigDecimal ahorroDirecto) {
         this.ahorroDirecto = ahorroDirecto;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 }
