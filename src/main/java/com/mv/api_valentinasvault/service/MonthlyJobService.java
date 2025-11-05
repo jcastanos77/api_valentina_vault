@@ -17,27 +17,6 @@ public class MonthlyJobService {
 
     private NotificationService notificationService;
 
-    @Autowired
-    private TransactionService transactionService;
-
-    // Se ejecuta a las 00:05 del día 1 de cada mes
-    @Scheduled(cron = "0 5 0 1 * *")
-    public void closePreviousMonth() {
-        LocalDate now = LocalDate.now();
-        LocalDate lastMonthDate = now.minusMonths(1);
-
-        int lastMonth = lastMonthDate.getMonthValue();
-        int year = lastMonthDate.getYear();
-
-        List<User> users = userRepository.findAll();
-
-        for (User user : users) {
-            transactionService.closeMonth(user, year, lastMonth);
-        }
-
-        System.out.println("✅ Cierre de mes ejecutado para " + users.size() + " usuarios");
-    }
-
     @Scheduled(cron = "0 0 8 1,15 * *") // Cada quincena a las 8:00 AM
     public void scheduleResetReminders() {
         List<User> users = userRepository.findAll();

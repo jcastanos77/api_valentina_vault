@@ -39,12 +39,6 @@ public class MonthlySummaryController {
         return ResponseEntity.ok(summary);
     }
 
-    @PostMapping("/close")
-    public ResponseEntity<String> closePreviousMonth() {
-        monthlyJobService.closePreviousMonth();
-        return ResponseEntity.ok("✅ Cierre de mes ejecutado manualmente");
-    }
-
     @PostMapping("/resetSummaries")
     public ResponseEntity<String> resetSummaries(@RequestHeader("Authorization") String authHeader) {
         String email = userService.getEmailFromToken(authHeader);

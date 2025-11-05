@@ -84,23 +84,28 @@ public class SavingsService {
         return getUserSavingsProgress(email);
     }
 
-    public void updateGoalsWithNewSaving(User user, BigDecimal newSavingAmount) {
-        List<SavingsGoal> goals = savingsGoalRepository.findByUserId(user.getId());
-        if (goals.isEmpty()) return;
-
-        for (SavingsGoal goal : goals) {
-            if (goal.getCurrentAmount().compareTo(goal.getTargetAmount()) < 0) {
-                BigDecimal newAmount = goal.getCurrentAmount().add(newSavingAmount);
-                if (newAmount.compareTo(goal.getTargetAmount()) > 0) {
-                    newAmount = goal.getTargetAmount(); // no pasar del 100%
-                }
-                goal.setCurrentAmount(newAmount);
-                goal.setUpdatedAt(LocalDateTime.now());
-                savingsGoalRepository.save(goal);
-                break;
-            }
+    public void updateGoalWithNewSaving(User user, UUID goalId, BigDecimal newSavingAmount) {
+        // Buscar la meta específica
+        Optional<SavingsGoal> optionalGoal = savingsGoalRepository.findByIdAndUserId(goalId, user.getId());
+        if (optionalGoal.isEmpty()) {
+            throw new IllegalArgumentException("Meta no encontrada o no pertenece al usuario");
         }
+
+        SavingsGoal goal = optionalGoal.get();
+
+        // Calcular nuevo monto
+        BigDecimal newAmount = goal.getCurrentAmount().add(newSavingAmount);
+        if (newAmount.compareTo(goal.getTargetAmount()) > 0) {
+            newAmount = goal.getTargetAmount(); // evitar pasar del 100%
+        }
+
+        goal.setCurrentAmount(newAmount);
+        goal.setUpdatedAt(LocalDateTime.now());
+        System.out.println("se agrega ahorro");
+        System.out.println(goal);
+        savingsGoalRepository.save(goal);
     }
+
     public boolean deleteGoal(UUID goalId, User user) {
         return savingsGoalRepository.findByIdAndUser(goalId, user)
                 .map(goal -> {

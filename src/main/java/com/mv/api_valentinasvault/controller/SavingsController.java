@@ -51,17 +51,20 @@ public class SavingsController {
 
         List<SavingsGoal> goals = savingGoalRepository.findByUserId(user.getId());
         List<Map<String, Object>> result = goals.stream().map(goal -> {
+            BigDecimal remainingAmount = goal.getTargetAmount().subtract(goal.getCurrentAmount());
+
             Map<String, Object> map = new HashMap<>();
             map.put("id", goal.getId());
             map.put("name", goal.getName());
             map.put("targetAmount", goal.getTargetAmount());
             map.put("currentAmount", goal.getCurrentAmount());
+            map.put("remainingAmount", remainingAmount);
             map.put("progress", goal.getTargetAmount().compareTo(BigDecimal.ZERO) == 0
                     ? 0
                     : goal.getCurrentAmount().divide(goal.getTargetAmount(), 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)));
             return map;
         }).toList();
-
+        System.out.println(result);
         return ResponseEntity.ok(result);
     }
 

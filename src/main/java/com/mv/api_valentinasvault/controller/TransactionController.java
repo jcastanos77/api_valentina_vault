@@ -155,16 +155,14 @@ public class TransactionController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/saving")
+    @PostMapping("/saving/{id}")
     public ResponseEntity<String> addDirectSaving(@RequestHeader("Authorization") String authHeader,
-                                                  @RequestBody Map<String, BigDecimal> body) {
+                                                  @RequestBody Map<String, BigDecimal> body, @PathVariable UUID id) {
         String email = userService.getEmailFromToken(authHeader);
         User user = userService.findByEmail(email);
         BigDecimal amount = body.get("amount");
 
-        transactionService.addDirectSaving(user, amount);
-
-        savingGoalService.updateGoalsWithNewSaving(user, amount);
+        savingGoalService.updateGoalWithNewSaving(user, id,amount);
 
         return ResponseEntity.ok("Direct saving added");
     }

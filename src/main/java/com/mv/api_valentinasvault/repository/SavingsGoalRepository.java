@@ -15,4 +15,5 @@ public interface SavingsGoalRepository extends JpaRepository<SavingsGoal, UUID> 
 
     Optional<SavingsGoal> findByIdAndUser(UUID id, User user);
 
+    Optional<SavingsGoal> findByIdAndUserId(UUID goalId, UUID id);
 }
