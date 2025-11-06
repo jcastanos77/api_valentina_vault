@@ -2,7 +2,10 @@ package com.mv.api_valentinasvault.controller;
 
 import com.mv.api_valentinasvault.model.MotivationalPost;
 import com.mv.api_valentinasvault.model.MotivationalComment;
+import com.mv.api_valentinasvault.model.Streak;
 import com.mv.api_valentinasvault.model.User;
+import com.mv.api_valentinasvault.repository.SavingsGoalRepository;
+import com.mv.api_valentinasvault.repository.StreakRepository;
 import com.mv.api_valentinasvault.service.MotivationService;
 import com.mv.api_valentinasvault.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +20,12 @@ public class MotivationController {
 
     private final MotivationService motivationService;
     private final UserService userService;
+    private final StreakRepository streakRepository;
 
-    public MotivationController(MotivationService motivationService, UserService userService) {
+    public MotivationController(MotivationService motivationService, UserService userService, StreakRepository streakRepository) {
         this.motivationService = motivationService;
         this.userService = userService;
+        this.streakRepository = streakRepository;
     }
 
     @PostMapping("/post")
@@ -43,6 +48,10 @@ public class MotivationController {
                     map.put("content", item.getContent());
                     map.put("createdAt", item.getCreatedAt());
                     map.put("commentCount", item.getComments().size());
+                    Streak streak = streakRepository.findByUserId(item.getUser().getId()).orElse(null);
+                    map.put("currentStreak", streak != null ? streak.getCurrentStreak() : 0);
+                    map.put("bestStreak", streak != null ? streak.getBestStreak() : 0);
+
                     return map;
                 })
                 .collect(Collectors.toList());

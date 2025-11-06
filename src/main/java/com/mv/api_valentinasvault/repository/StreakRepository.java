@@ -1,0 +1,10 @@
+package com.mv.api_valentinasvault.repository;
+
+import com.mv.api_valentinasvault.model.Streak;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+import java.util.UUID;
+
+public interface StreakRepository extends JpaRepository<Streak, UUID> {
+    Optional<Streak> findByUserId(UUID userId);
+}

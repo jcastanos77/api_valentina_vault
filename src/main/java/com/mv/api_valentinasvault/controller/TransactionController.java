@@ -9,6 +9,7 @@ import com.mv.api_valentinasvault.model.UserRule;
 import com.mv.api_valentinasvault.repository.MonthlySummaryRepository;
 import com.mv.api_valentinasvault.repository.UserRuleRepository;
 import com.mv.api_valentinasvault.service.SavingsService;
+import com.mv.api_valentinasvault.service.StreakService;
 import com.mv.api_valentinasvault.service.TransactionService;
 import com.mv.api_valentinasvault.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +32,14 @@ public class TransactionController {
     private final MonthlySummaryRepository monthlySummaryRepository;
     private final UserRuleRepository userRulesRepository;
     private final SavingsService savingGoalService;
-    public TransactionController(TransactionService transactionService, UserService userService, MonthlySummaryRepository monthlySummaryRepository, UserRuleRepository userRulesRepository, SavingsService savingGoalService) {
+    private final StreakService streakService;
+    public TransactionController(TransactionService transactionService, UserService userService, MonthlySummaryRepository monthlySummaryRepository, UserRuleRepository userRulesRepository, SavingsService savingGoalService, StreakService streakService) {
         this.transactionService = transactionService;
         this.userService = userService;
         this.monthlySummaryRepository = monthlySummaryRepository;
         this.userRulesRepository = userRulesRepository;
         this.savingGoalService = savingGoalService;
+        this.streakService = streakService;
     }
 
     // 🔹 Obtener todas las transacciones de un usuario
@@ -54,6 +57,9 @@ public class TransactionController {
                 BigDecimal.valueOf(request.getAmount()),
                 request.getDescription()
         );
+
+        streakService.registerActivity(user);
+
         return ResponseEntity.ok("Income added and distributed 50/30/20");
     }
     // 🔹 Crear transacción
@@ -69,6 +75,8 @@ public class TransactionController {
                 BigDecimal.valueOf(request.getAmount()),
                 request.getDescription()
         );
+
+        streakService.registerActivity(user);
 
         return ResponseEntity.ok("Expense added to category: " + request.getCategory());
     }
@@ -163,6 +171,8 @@ public class TransactionController {
         BigDecimal amount = body.get("amount");
 
         savingGoalService.updateGoalWithNewSaving(user, id,amount);
+
+        streakService.registerActivity(user);
 
         return ResponseEntity.ok("Direct saving added");
     }
